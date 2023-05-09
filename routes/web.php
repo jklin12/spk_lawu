@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthenticateController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogistikController;
 use App\Http\Controllers\PendakianController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,8 +31,10 @@ Route::post('/doRegister', [AuthenticateController::class, 'doRegister'])->name(
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class,'index'])->name('home');
-    Route::get('/logout', [AuthenticateController::class,'doLogout'])->name('logout');
+    Route::get('/logout', [AuthenticateController::class,'doLogout'])->name('logout'); 
+    Route::get('/pendakian/ticket/{id}', [PendakianController::class,'ticket'])->name('pendakian.ticket'); 
     Route::resource('/pendakian', PendakianController::class);
     Route::resource('/logistik', LogistikController::class);
+    Route::resource('/user', UserController::class);
     
 });

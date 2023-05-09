@@ -19,24 +19,42 @@
     <div class="card shadow mb-4">
 
         <div class="card-body">
-            <p>Nama Kelompok : {{ $pendakian->nama_kelompok}}</p>
-            <p>Tanggal Berangkat : {{ $pendakian->tanggal_berangkat}}</p>
-            <p>Tanggal Pulang : {{ $pendakian->tanggal_pulang}}</p>
-            <p>Jumlah Anggota : {{ $pendakian->jumlah_anggota}} Orang</p>
-            @php
-            $badgeColor = '';
-            if($pendakian->status == 'pengajuan'){
-            $badgeColor = 'primary';
-            }elseif($pendakian->status == 'diterima'){
-            $badgeColor = 'success';
-            }elseif($pendakian->status == 'pengajuan_ulang'){
-            $badgeColor = 'warning';
-            }elseif($pendakian->status == 'ditolak'){
-            $badgeColor = 'danger';
-            }
-            @endphp
-            <p>Status : <span class="badge badge-{{$badgeColor}}">{{ $pendakian->status}}</span></p>
-            <!-- Circle Buttons (Default) -->
+
+            <div class="row">
+                <div class="col">
+                    <p>Nama Kelompok : {{ $pendakian->nama_kelompok}}</p>
+                    <p>Tanggal Berangkat : {{ $pendakian->tanggal_berangkat}}</p>
+                    <p>Tanggal Pulang : {{ $pendakian->tanggal_pulang}}</p>
+                    <p>Jumlah Anggota : {{ $pendakian->jumlah_anggota}} Orang</p>
+                    @php
+                    $badgeColor = '';
+                    if($pendakian->status == 'pengajuan'){
+                    $badgeColor = 'primary';
+                    }elseif($pendakian->status == 'diterima'){
+                    $badgeColor = 'success';
+                    }elseif($pendakian->status == 'pengajuan_ulang'){
+                    $badgeColor = 'warning';
+                    }elseif($pendakian->status == 'ditolak'){
+                    $badgeColor = 'danger';
+                    }
+                    @endphp
+                    <p>Status : <span class="badge badge-{{$badgeColor}}">{{ $pendakian->status}}</span></p>
+                    <!-- Circle Buttons (Default) -->
+                    @if(auth()->user()->is_admin && $pendakian->status != 'diterima')
+                    <a href="javascript:;" class="btn btn-primary btn-icon-split mb-2" data-toggle="modal" data-target="#acc-modal">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span class="text">Acc Pendaftaran</span>
+                    </a>
+                    @endif
+                </div>
+                <div class="col">
+                    @if($pendakian->status == 'diterima')
+                    {!! QrCode::size(300)->generate(route('pendakian.ticket',$pendakian->pendakian_id)) !!}
+                    @endif
+                </div>
+            </div>
 
         </div>
     </div>
@@ -78,15 +96,17 @@
             <h6>Data Logistik</h6>
         </div>
         <div class="card-body">
+            @if(!auth()->user()->is_admin && $pendakian->user_id == auth()->user()->id)
             <a href="javascript:;" class="btn btn-primary btn-icon-split mb-2" data-toggle="modal" data-target="#add-modal">
                 <span class="icon text-white-50">
                     <i class="fas fa-plus"></i>
                 </span>
                 <span class="text">Tambah Logistik</span>
             </a>
+            @endif
             <div class="alert alert-warning alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>  Barang yang wajib dibawa</strong> 
+                <strong> Barang yang wajib dibawa</strong>
                 <ul>
                     <li>Sleeping Bag</li>
                     <li>Tenda</li>
@@ -94,7 +114,7 @@
                     <li>Obat Pribadi</li>
                 </ul>
             </div>
-             
+
 
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
@@ -102,7 +122,9 @@
                         <th>No</th>
                         <th>Nama Barang</th>
                         <th>Jumlah</th>
+                        @if(!auth()->user()->is_admin && $pendakian->user_id == auth()->user()->id)
                         <th colspan="2">Action</th>
+                        @endif
                     </tr>
                 </thead>
 
@@ -113,9 +135,10 @@
                         <td>{{ $loop->iteration}}</td>
                         <td>{{ $logistik->nama_barang}}</td>
                         <td>{{ $logistik->jumlah_barang}}</td>
-
+                        @if(!auth()->user()->is_admin && $pendakian->user_id == auth()->user()->id)
                         <td><button type="button" class="btn btn-warning edit-btn" data-toggle="modal" data-target="#edit-modal" data-route="{{ route('logistik.update',$logistik->id)}}" data-nama="{{ $logistik->nama_barang}}" data-jumlah="{{ $logistik->jumlah_barang}}">Edit</button></td>
                         <td><button type="button" class="btn btn-danger delete-btn" data-toggle="modal" data-target="#delete-modal" data-route="{{ route('logistik.destroy',$logistik->id) }}" data-nama="{{ $logistik->nama_barang}}">Hapus</button></td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>
@@ -187,6 +210,29 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
                 <button class="btn btn-primary" form="edit-form" type="submit">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="acc-modal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Acc Pendaftaran</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Apakah anda yakin menerima pendaftaran <strong id="delete-name"></strong>?</div>
+            <form action="{{ route('pendakian.update',$pendakian->pendakian_id)}}" method="POST" id="acc-form">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="status" value="diterima">
+            </form>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
+                <button class="btn btn-primary" form="acc-form" type="submit">Ya</button>
             </div>
         </div>
     </div>

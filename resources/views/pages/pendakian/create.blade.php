@@ -4,6 +4,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 <link href="{{ URL::asset('assets/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/css/smart_wizard_all.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">
 @endpush
 @section('content')
 <div class="container-fluid">
@@ -53,11 +54,23 @@
                             </div>
                             <div class="form-group">
                                 <label for="inputNim">Tanggal Berangkat</label>
-                                <input type="text" class="form-control" id="inputNim" placeholder="" name="tanggal_berangkat" value="{{ old('tanggal_berangkat') }}">
+                                <div class="datepicker date input-group">
+                                    <input type="text" class="form-control" id="inputNim" placeholder="" name="tanggal_berangkat" value="{{ old('tanggal_berangkat') }}">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+
+
                             </div>
                             <div class="form-group">
                                 <label for="inputNim">Tanggal Pulang</label>
-                                <input type="text" class="form-control" id="inputNim" placeholder="" name="tanggal_pulang" value="{{ old('tanggal_pulang') }}">
+                                <div class="datepicker date input-group">
+                                    <input type="text" class="form-control" id="inputNim" placeholder="" name="tanggal_pulang" value="{{ old('tanggal_pulang') }}">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputNim">Jumlah Anggota</label>
@@ -75,51 +88,56 @@
                             @csrf
                             <input type="hidden" name="step" value="1">
                             <input type="hidden" name="pendakian_id" value="{{$id}}">
-                            @for ($i=0; $i < $anggota ; $i++)
-                            <div class="form-group">
+                            @for ($i=0; $i < $anggota ; $i++) <div class="form-group">
                                 <label for="inputNim">Nama Anggota {{$i +1}}</label>
                                 <input type="text" class="form-control" id="inputNim" placeholder="" name="nama_anggota[]" value="{{ old('nama_anggota')[$i] ?? '' }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputNim">Alamat Anggota {{$i +1}}</label>
-                                <input type="text" class="form-control" id="inputNim" placeholder="" name="alamat_anggota[]" value="{{ old('alamat_anggota')[$i] ?? '' }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputNim">Jenis Kelamin Anggota {{$i +1}}</label>
-                                <select class="form-control" id="exampleFormControlSelect1" name="jenis_kelamin_anggota[]">
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputNim">Tempat Lahir Anggota {{$i +1}}</label>
-                                <input type="text" class="form-control" id="inputNim" placeholder="" name="tempat_lahir_anggota[]" value="{{ old('tempat_lahir_anggota')[$i] ?? '' }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputNim">Tanggal Lahir Anggota {{$i +1}}</label>
-                                <input type="text" class="form-control" id="inputNim" placeholder="" name="tanggal_lahir_anggota[]" value="{{ old('tanggal_lahir_anggota')[$i] ?? '' }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputNim">No Telepon Anggota {{$i +1}}</label>
-                                <input type="text" class="form-control" id="inputNim" placeholder="" name="telepon_anggota[]" value="{{ old('telepon_anggota')[$i] ?? '' }}">
-                            </div>
-                            @endfor
-                            <div class="text-right">
-                                <button type="submit" class="btn btn-success">Sumbit</button>
-                            </div>
-                        </form>
-                        @endif
-
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="inputNim">Alamat Anggota {{$i +1}}</label>
+                        <input type="text" class="form-control" id="inputNim" placeholder="" name="alamat_anggota[]" value="{{ old('alamat_anggota')[$i] ?? '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputNim">Jenis Kelamin Anggota {{$i +1}}</label>
+                        <select class="form-control" id="exampleFormControlSelect1" name="jenis_kelamin_anggota[]">
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputNim">Tempat Lahir Anggota {{$i +1}}</label>
+                        <input type="text" class="form-control" id="inputNim" placeholder="" name="tempat_lahir_anggota[]" value="{{ old('tempat_lahir_anggota')[$i] ?? '' }}">
+                    </div>
+                    <div class="form-group">
 
-                <!-- Include optional progressbar HTML -->
-                <div class="progress">
-                    <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        <label for="inputNim">Tanggal Lahir Anggota {{$i +1}}</label>
+                        <div class="datepicker date input-group">
+                            <input type="text" class="form-control" id="inputNim" placeholder="" name="tanggal_lahir_anggota[]" value="{{ old('tanggal_lahir_anggota')[$i] ?? '' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputNim">No Telepon Anggota {{$i +1}}</label>
+                        <input type="text" class="form-control" id="inputNim" placeholder="" name="telepon_anggota[]" value="{{ old('telepon_anggota')[$i] ?? '' }}">
+                    </div>
+                    @endfor
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-success">Sumbit</button>
+                    </div>
+                    </form>
+                    @endif
+
                 </div>
+            </div>
+
+            <!-- Include optional progressbar HTML -->
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
     </div>
+</div>
 
 
 </div>
@@ -130,6 +148,7 @@
 <script src="{{ URL::asset('assets/vendor/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ URL::asset('assets/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/js/jquery.smartWizard.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <!-- Page level custom scripts -->
 
 <script>
@@ -146,6 +165,12 @@
                 showNextButton: false, // show/hide a Next button
                 showPreviousButton: false, // show/hide a Previous button
             }
+        });
+
+        $('.datepicker').datepicker({
+            language: "es",
+            autoclose: true,
+            format: "yyyy-mm-dd"
         });
 
     })

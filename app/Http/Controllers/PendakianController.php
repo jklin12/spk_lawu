@@ -17,11 +17,17 @@ class PendakianController extends Controller
      */
     public function index()
     {
-        $pendakians = Pendakian::where('user_id', Auth::user()->id)->get();
+
+        if (auth()->user()->is_admin) {
+            $pendakians = Pendakian::get();
+        } else {
+            $pendakians = Pendakian::where('user_id', Auth::user()->id)->get();
+        }
+
 
         $laod['pendakians'] = $pendakians;
 
-        return view('pages.pendakian.index',$laod);
+        return view('pages.pendakian.index', $laod);
     }
 
     /**
@@ -55,12 +61,16 @@ class PendakianController extends Controller
                 'jumlah_anggota' => 'required|integer',
             ]);
 
+            $cekJadwal = Pendakian::where('tanggal_berangkat', $request->tanggal_berangkat)
+                ->leftJoin('anggotas', 'pendakians.pendakian_id', '=', 'anggotas.pendakian_id')->count();
+            //dd($cekJadwal);
             $postVal['user_id'] = Auth::user()->id;
             $postVal['nama_kelompok'] = $request->nama_kelompok;
             $postVal['tanggal_berangkat'] = $request->tanggal_berangkat;
             $postVal['tanggal_pulang'] = $request->tanggal_pulang;
             $postVal['jumlah_anggota'] = $request->jumlah_anggota;
-            $postVal['status'] = 'pengajuan';
+            $postVal['status'] = $cekJadwal <= 10 ?  'pengajuan' : 'ditolak';
+
 
             $create = Pendakian::create($postVal);
 
@@ -90,7 +100,7 @@ class PendakianController extends Controller
             //dd($postVal);
             Anggota::insert($postVal);
 
-            return redirect()->route('pendakian.index');
+            return redirect()->route('pendakian.index')->withSuccess('Tambah Pendakian Berhasil');
         }
     }
 
@@ -103,13 +113,13 @@ class PendakianController extends Controller
     public function show(Pendakian $pendakian)
     {
         $load['pendakian'] = $pendakian;
-        $load['anggotas'] = Anggota::where('pendakian_id',$pendakian->pendakian_id)->get();
-        $load['logistiks'] = Logistik::where('pendakian_id',$pendakian->pendakian_id)->get();
+        $load['anggotas'] = Anggota::where('pendakian_id', $pendakian->pendakian_id)->get();
+        $load['logistiks'] = Logistik::where('pendakian_id', $pendakian->pendakian_id)->get();
 
-        
+
 
         //dd($laod);
-        return view('pages.pendakian.show',$load);
+        return view('pages.pendakian.show', $load);
     }
 
     /**
@@ -132,7 +142,9 @@ class PendakianController extends Controller
      */
     public function update(Request $request, Pendakian $pendakian)
     {
-        //
+        $pendakian->update($request->all());
+
+        return redirect()->route('pendakian.show',$pendakian->pendakian_id)->withSuccess('Update Pendakianp Berhasil');;;;
     }
 
     /**
@@ -144,5 +156,11 @@ class PendakianController extends Controller
     public function destroy(Pendakian $pendakian)
     {
         //
+    }
+
+    public function ticket($id){
+        $pendakian = Pendakian::find($id);
+        $anggotas = Anggota::where('pendakian_id', $id)->get();
+        return view('pages.pendakian.ticket',compact('pendakian','anggotas'));
     }
 }
