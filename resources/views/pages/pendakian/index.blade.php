@@ -21,7 +21,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Kelompok</th>
+                        <th>Ketua Kelompok</th>
                         <th>Tanggal Berangkat</th>
                         <th>Tanggal Pulang</th>
                         <th>Jumlah Anggota</th>
@@ -32,7 +32,7 @@
                 @foreach($pendakians as $key => $pendakian)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{$pendakian->nama_kelompok}}</td>
+                    <td>{{$pendakian->ketua_nama}}</td>
                     <td>{{$pendakian->tanggal_berangkat}}</td>
                     <td>{{$pendakian->tanggal_pulang}}</td>
                     <td>{{$pendakian->jumlah_anggota}}</td>

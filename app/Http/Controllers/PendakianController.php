@@ -41,6 +41,8 @@ class PendakianController extends Controller
         $laod['step'] = $request->step ?? 0;
         $laod['id'] = $request->id ?? '';
         $laod['anggota'] = $request->anggota ?? '';
+        $laod['cities'] = \Indonesia::allCities();
+        //dd($laod);
 
         return view('pages.pendakian.create', $laod);
     }
@@ -53,55 +55,67 @@ class PendakianController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->step == 0) {
-            $this->validate($request, [
-                'nama_kelompok' => 'required|string',
-                'tanggal_berangkat' => 'required|date',
-                'tanggal_pulang' => 'required|date',
-                'jumlah_anggota' => 'required|integer',
-            ]);
+        //dd($request->all());
+        /*$this->validate($request, [
+            'nama_kelompok' => 'required|string',
+            'tanggal_berangkat' => 'required|date',
+            'tanggal_pulang' => 'required|date',
+            'jumlah_anggota' => 'required|integer',
+        ]);
+        $this->validate($request, [
+            'pendakian_id' => 'required',
+            'nama_anggota.*' => 'required|string',
+            'alamat_anggota.*' => 'required|string',
+            'jenis_kelamin_anggota.*' => 'required|string',
+            'tempat_lahir_anggota.*' => 'required|string',
+            'tanggal_lahir_anggota.*' => 'required|date',
+            'telepon_anggota.*' => 'required|string',
+        ]);*/
 
-            $cekJadwal = Pendakian::where('tanggal_berangkat', $request->tanggal_berangkat)
-                ->leftJoin('anggotas', 'pendakians.pendakian_id', '=', 'anggotas.pendakian_id')->count();
-            //dd($cekJadwal);
-            $postVal['user_id'] = Auth::user()->id;
-            $postVal['nama_kelompok'] = $request->nama_kelompok;
-            $postVal['tanggal_berangkat'] = $request->tanggal_berangkat;
-            $postVal['tanggal_pulang'] = $request->tanggal_pulang;
-            $postVal['jumlah_anggota'] = $request->jumlah_anggota;
-            $postVal['status'] = $cekJadwal <= 10 ?  'pengajuan' : 'ditolak';
+        $cekJadwal = Pendakian::where('tanggal_berangkat', $request->tanggal_berangkat)
+            ->leftJoin('anggotas', 'pendakians.pendakian_id', '=', 'anggotas.pendakian_id')->count();
+        //dd($cekJadwal);
+        $postPendakian['user_id'] = Auth::user()->id;
+        $postPendakian['ketua_nama'] = $request->data_pendakian['ketua_nama'];
+        $postPendakian['ketua_jenis_kelamin'] = $request->data_pendakian['ketua_jenis_kelamin'];
+        $postPendakian['ketua_telepon'] = $request->data_pendakian['ketua_telepon'];
+        $postPendakian['ketua_tempat_lahir'] = $request->data_pendakian['ketua_tempat_lahir'];
+        $postPendakian['ketua_tgl_lahir'] = $request->data_pendakian['ketua_tgl_lahir'];
+        $postPendakian['tanggal_berangkat'] = $request->data_pendakian['tanggal_berangkat'];
+        $postPendakian['tanggal_pulang'] = $request->data_pendakian['tanggal_pulang'];
+        $postPendakian['jumlah_anggota'] = $request->data_pendakian['jumlah_anggota'];
+        $postPendakian['status'] = $cekJadwal <= 10 ?  'pengajuan' : 'ditolak';
 
 
-            $create = Pendakian::create($postVal);
+        $create = Pendakian::create($postPendakian);
 
-            return redirect()->route('pendakian.create', 'id=' . $create->pendakian_id . '&anggota=' . $request->jumlah_anggota . '&step=1');
-        } elseif ($request->step == 1) {
-            //dd($request->all());
-            $this->validate($request, [
-                'pendakian_id' => 'required',
-                'nama_anggota.*' => 'required|string',
-                'alamat_anggota.*' => 'required|string',
-                'jenis_kelamin_anggota.*' => 'required|string',
-                'tempat_lahir_anggota.*' => 'required|string',
-                'tanggal_lahir_anggota.*' => 'required|date',
-                'telepon_anggota.*' => 'required|string',
-            ]);
-
-            $postVal = [];
-            foreach ($request->nama_anggota as $key => $value) {
-                $postVal[$key]['pendakian_id'] = $request->pendakian_id;
-                $postVal[$key]['nama_anggota'] = $value;
-                $postVal[$key]['alamat_anggota'] = $request->alamat_anggota[$key];
-                $postVal[$key]['jenis_kelamin_anggota'] = $request->jenis_kelamin_anggota[$key];
-                $postVal[$key]['tempat_lahir_anggota'] = $request->tempat_lahir_anggota[$key];
-                $postVal[$key]['tanggal_lahir_anggota'] = $request->tanggal_lahir_anggota[$key];
-                $postVal[$key]['telepon_anggota'] = $request->telepon_anggota[$key];
+        $jumlahArrAnggota = $request->data_pendakian['jumlah_anggota'];
+        $postAnggota = [];
+        for ($i = 0; $i < $jumlahArrAnggota; $i++) {
+            foreach ($request->data_anggota as $key => $value) {
+                $postAnggota[$i]['pendakian_id'] = $create->pendakian_id;
+                $postAnggota[$i][$key] = $value[$i];
             }
-            //dd($postVal);
-            Anggota::insert($postVal);
-
-            return redirect()->route('pendakian.index')->withSuccess('Tambah Pendakian Berhasil');
         }
+        Anggota::insert($postAnggota);
+
+        dd($postPendakian, $postAnggota);
+      
+        foreach ($request->data_anggota as $key => $value) {
+            $postVal[$key]['pendakian_id'] = $request->pendakian_id;
+            $postVal[$key]['nama_anggota'] = $value;
+            $postVal[$key]['alamat_anggota'] = $request->alamat_anggota[$key];
+            $postVal[$key]['jenis_kelamin_anggota'] = $request->jenis_kelamin_anggota[$key];
+            $postVal[$key]['tempat_lahir_anggota'] = $request->tempat_lahir_anggota[$key];
+            $postVal[$key]['tanggal_lahir_anggota'] = $request->tanggal_lahir_anggota[$key];
+            $postVal[$key]['telepon_anggota'] = $request->telepon_anggota[$key];
+
+            //dd($postVal);
+           
+        }
+       
+
+        return redirect()->route('pendakian.index')->withSuccess('Tambah Pendakian Berhasil');
     }
 
     /**
@@ -113,10 +127,12 @@ class PendakianController extends Controller
     public function show(Pendakian $pendakian)
     {
         $load['pendakian'] = $pendakian;
-        $load['anggotas'] = Anggota::where('pendakian_id', $pendakian->pendakian_id)->get();
+        $load['anggotas'] = Anggota::where('pendakian_id', $pendakian->pendakian_id)
+        ->leftJoin('indonesia_cities','anggotas.tempat_lahir_anggota','=','indonesia_cities.id')->get();
         $load['logistiks'] = Logistik::where('pendakian_id', $pendakian->pendakian_id)->get();
 
-
+        $kota  = \Indonesia::findCity($pendakian->ketua_tempat_lahir, $with = null);
+        $load['kota'] = $kota;
 
         //dd($laod);
         return view('pages.pendakian.show', $load);
@@ -144,7 +160,7 @@ class PendakianController extends Controller
     {
         $pendakian->update($request->all());
 
-        return redirect()->route('pendakian.show',$pendakian->pendakian_id)->withSuccess('Update Pendakianp Berhasil');;;;
+        return redirect()->route('pendakian.show', $pendakian->pendakian_id)->withSuccess('Update Pendakianp Berhasil');;;;
     }
 
     /**
@@ -158,9 +174,10 @@ class PendakianController extends Controller
         //
     }
 
-    public function ticket($id){
+    public function ticket($id)
+    {
         $pendakian = Pendakian::find($id);
         $anggotas = Anggota::where('pendakian_id', $id)->get();
-        return view('pages.pendakian.ticket',compact('pendakian','anggotas'));
+        return view('pages.pendakian.ticket', compact('pendakian', 'anggotas'));
     }
 }

@@ -22,7 +22,10 @@
 
             <div class="row">
                 <div class="col">
-                    <p>Nama Kelompok : {{ $pendakian->nama_kelompok}}</p>
+                    <p>Ketua Kelompok : {{ $pendakian->ketua_nama}}</p>
+                    <p>Ketua Jenis Kelamin : {{ $pendakian->ketua_jenis_kelamin}}</p>
+                    <p>Ketua Telepon : {{ $pendakian->ketua_telepon}}</p>
+                    <p>Ketua Tempat Tanggal Lahir : {{ $kota->name.', '.$pendakian->ketua_tgl_lahir}}</p>
                     <p>Tanggal Berangkat : {{ $pendakian->tanggal_berangkat}}</p>
                     <p>Tanggal Pulang : {{ $pendakian->tanggal_pulang}}</p>
                     <p>Jumlah Anggota : {{ $pendakian->jumlah_anggota}} Orang</p>
@@ -83,7 +86,7 @@
                         <td>{{ $anggota->nama_anggota}}</td>
                         <td>{{ $anggota->alamat_anggota}}</td>
                         <td>{{ $anggota->jenis_kelamin_anggota}}</td>
-                        <td>{{ $anggota->tempat_lahir_anggota.', '.$anggota->tanggal_lahir_anggota}}</td>
+                        <td>{{ $anggota->name.', '.$anggota->tanggal_lahir_anggota}}</td>
                         <td>{{ $anggota->telepon_anggota}}</td>
                     </tr>
                     @endforeach

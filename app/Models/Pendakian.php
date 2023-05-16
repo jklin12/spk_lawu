@@ -13,7 +13,11 @@ class Pendakian extends Model
 
     protected $fillable = [
         'user_id',
-        'nama_kelompok',
+        'ketua_nama',
+        'ketua_jenis_kelamin',
+        'ketua_telepon',
+        'ketua_tempat_lahir',
+        'ketua_tgl_lahir',
         'tanggal_berangkat',
         'tanggal_pulang',
         'jumlah_anggota',
