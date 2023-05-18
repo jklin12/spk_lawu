@@ -33,6 +33,11 @@
             <span>Jadwal Pendakian</span></a>
     </li>
     @if(auth()->user()->is_admin)
+    <li class="nav-item" id="nav-master_logistik">
+        <a class="nav-link" href="{{ route('master_logistik.index')}}">
+            <i class="fas fa-fw fa-database"></i>
+            <span>Master Logistik</span></a>
+    </li> 
     <li class="nav-item" id="nav-user">
         <a class="nav-link" href="{{ route('user.index')}}">
             <i class="fas fa-fw fa-users"></i>

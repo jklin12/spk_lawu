@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Anggota;
 use App\Models\Logistik;
+use App\Models\MasterLogistik;
 use App\Models\Pendakian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,7 +79,7 @@ class PendakianController extends Controller
         $postPendakian['user_id'] = Auth::user()->id;
         $postPendakian['ketua_nama'] = $request->data_pendakian['ketua_nama'];
         $postPendakian['ketua_jenis_kelamin'] = $request->data_pendakian['ketua_jenis_kelamin'];
-        $postPendakian['ketua_telepon'] = $request->data_pendakian['ketua_telepon'];
+        $postPendakian['ketua_telepon'] = $this->waFormat($request->data_pendakian['ketua_telepon']);
         $postPendakian['ketua_tempat_lahir'] = $request->data_pendakian['ketua_tempat_lahir'];
         $postPendakian['ketua_tgl_lahir'] = $request->data_pendakian['ketua_tgl_lahir'];
         $postPendakian['tanggal_berangkat'] = $request->data_pendakian['tanggal_berangkat'];
@@ -95,12 +96,13 @@ class PendakianController extends Controller
             foreach ($request->data_anggota as $key => $value) {
                 $postAnggota[$i]['pendakian_id'] = $create->pendakian_id;
                 $postAnggota[$i][$key] = $value[$i];
+                $postAnggota[$i]['telepon_anggota'] = $this->waFormat($value[$i]);
             }
         }
         Anggota::insert($postAnggota);
 
-        dd($postPendakian, $postAnggota);
-      
+        //dd($postPendakian, $postAnggota);
+
         foreach ($request->data_anggota as $key => $value) {
             $postVal[$key]['pendakian_id'] = $request->pendakian_id;
             $postVal[$key]['nama_anggota'] = $value;
@@ -111,9 +113,9 @@ class PendakianController extends Controller
             $postVal[$key]['telepon_anggota'] = $request->telepon_anggota[$key];
 
             //dd($postVal);
-           
+
         }
-       
+
 
         return redirect()->route('pendakian.index')->withSuccess('Tambah Pendakian Berhasil');
     }
@@ -127,12 +129,33 @@ class PendakianController extends Controller
     public function show(Pendakian $pendakian)
     {
         $load['pendakian'] = $pendakian;
-        $load['anggotas'] = Anggota::where('pendakian_id', $pendakian->pendakian_id)
-        ->leftJoin('indonesia_cities','anggotas.tempat_lahir_anggota','=','indonesia_cities.id')->get();
-        $load['logistiks'] = Logistik::where('pendakian_id', $pendakian->pendakian_id)->get();
+        $anggotas = Anggota::where('pendakian_id', $pendakian->pendakian_id)
+            ->leftJoin('indonesia_cities', 'anggotas.tempat_lahir_anggota', '=', 'indonesia_cities.id')->get();
+        $load['anggotas'] = $anggotas;
+        $logistiks = Logistik::where('pendakian_id', $pendakian->pendakian_id)
+            ->leftJoin('master_logistiks', 'logistiks.nama_barang', '=', 'master_logistiks.master_logistik_id')->get();
+        $load['logistiks'] = $logistiks;
 
         $kota  = \Indonesia::findCity($pendakian->ketua_tempat_lahir, $with = null);
         $load['kota'] = $kota;
+        $load['master_logistik'] = MasterLogistik::get();
+
+        if (Auth::user()->is_admin) {
+            $listWajib = MasterLogistik::where('master_logistik_wajib', 1)
+                ->leftJoin('logistiks', 'master_logistiks.master_logistik_id', '=', 'logistiks.nama_barang')
+                ->get();
+            $pesanLogistik = "<p>Data logistik calon pendaki belum lengkap :</p><ul>";
+            foreach ($listWajib as $key => $value) {
+                if (!$value->id) {
+                    $pesanLogistik .= '<li>' . $value->master_logistik_nama . ' Belum ada </li>';
+                } elseif ($value->id && $value->master_logistik_jenis == 'Individu' && $value->jumlah_barang < $pendakian->jumlah_anggot) {
+                    $pesanLogistik .= '<li> Jumlah ' . $value->master_logistik_nama . ' masih kurang ' . ($pendakian->jumlah_anggot - $value->jumlah_barang) . '</li>';
+                }
+            }
+            $pesanLogistik .= "</ul>";
+            //echo ($pesanLogistik);die;
+            $load['pesan_logistik'] = $pesanLogistik;
+        }
 
         //dd($laod);
         return view('pages.pendakian.show', $load);
@@ -160,7 +183,7 @@ class PendakianController extends Controller
     {
         $pendakian->update($request->all());
 
-        return redirect()->route('pendakian.show', $pendakian->pendakian_id)->withSuccess('Update Pendakianp Berhasil');;;;
+        return redirect()->route('pendakian.show', $pendakian->pendakian_id)->withSuccess('Update Pendakianp Berhasil');
     }
 
     /**
@@ -179,5 +202,17 @@ class PendakianController extends Controller
         $pendakian = Pendakian::find($id);
         $anggotas = Anggota::where('pendakian_id', $id)->get();
         return view('pages.pendakian.ticket', compact('pendakian', 'anggotas'));
+    }
+
+    private function waFormat($phoneNumber)
+    {
+
+        if (substr($phoneNumber, 0, 1) === '0' || substr($phoneNumber, 0, 1) != '62' ) {
+            $phoneNumber = '62' . substr($phoneNumber, 1);
+        } else {
+            $phoneNumber = $phoneNumber;
+        }
+
+        return $phoneNumber;
     }
 }

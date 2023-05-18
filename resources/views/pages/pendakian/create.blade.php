@@ -63,7 +63,7 @@
                             <div class="form-group">
                                 <label for="input_ketua_tempat_lahir">Tempat Lahir Ketua Kelompok</label>
                                 <div class="form-group">
-                                    <select class="form-control " id="input_ketua_tempat_lahir" name="ketua_tempat_lahir" style="width: 100%;" required>
+                                    <select class="form-control select2" id="input_ketua_tempat_lahir" name="ketua_tempat_lahir" style="width: 100%;" required>
                                         <option value="">-- Pilih Kabupaten / Kota</option>
                                         @foreach($cities as $city)
                                         <option value="{{ $city->id}}">{{ $city->name }}</option>
@@ -145,7 +145,7 @@
                                     <label for="inputNim">Tempat Lahir Anggota </label>
 
                                     <div class="form-group" required>
-                                        <select class="form-control " id="tempat_lahir_anggota" name="data_anggota[tempat_lahir_anggota][]" style="width: 100%;">
+                                        <select class="form-control select2" id="tempat_lahir_anggota" name="data_anggota[tempat_lahir_anggota][]" style="width: 100%;">
                                             <option value="">-- Pilih Kabupaten / Kota</option>
                                             @foreach($cities as $city)
                                             <option value="{{ $city->id}}">{{ $city->name }}</option>
@@ -218,7 +218,7 @@
         var tgl_berangkat = $('#input_tgl_berangkat').val();
         var tgl_pulang = $('#input_tgl_pulang').val();
         var jumlah_anggota = $('#input_jumlah_anggota').val();
-        
+
         $('#confrom_ketua_nama').val(ketua_nama);
         $('#confrom_ketua_jenis_kelamin').val(ketua_jenis_kelamin);
         $('#confrom_ketua_tempat_lahir').val(ketua_tempat_lahir);
@@ -234,14 +234,18 @@
                 .attr('id', 'anggota' + i)
                 .insertAfter('#anggota-1')
         }
+        refreshSelect();
 
     }
 
+    function refreshSelect() {
+        $(".select2").select2();
+    }
 
     $(document).ready(function() {
         $('#nav-anggota').addClass('active')
 
-        $(".select2").select2();
+        refreshSelect();
 
 
         $("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {

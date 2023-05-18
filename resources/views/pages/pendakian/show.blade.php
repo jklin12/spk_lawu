@@ -16,6 +16,7 @@
     </div>
     @endif
 
+
     <div class="card shadow mb-4">
 
         <div class="card-body">
@@ -24,7 +25,7 @@
                 <div class="col">
                     <p>Ketua Kelompok : {{ $pendakian->ketua_nama}}</p>
                     <p>Ketua Jenis Kelamin : {{ $pendakian->ketua_jenis_kelamin}}</p>
-                    <p>Ketua Telepon : {{ $pendakian->ketua_telepon}}</p>
+                    <p>Ketua Telepon : <a href="https://wa.me/ {{ $pendakian->ketua_telepon}}" target="_blank"> {{ $pendakian->ketua_telepon}}</a></p>
                     <p>Ketua Tempat Tanggal Lahir : {{ $kota->name.', '.$pendakian->ketua_tgl_lahir}}</p>
                     <p>Tanggal Berangkat : {{ $pendakian->tanggal_berangkat}}</p>
                     <p>Tanggal Pulang : {{ $pendakian->tanggal_pulang}}</p>
@@ -87,7 +88,7 @@
                         <td>{{ $anggota->alamat_anggota}}</td>
                         <td>{{ $anggota->jenis_kelamin_anggota}}</td>
                         <td>{{ $anggota->name.', '.$anggota->tanggal_lahir_anggota}}</td>
-                        <td>{{ $anggota->telepon_anggota}}</td>
+                        <td><a href="https://wa.me/{{ $anggota->telepon_anggota}}" target="_blank">{{ $anggota->telepon_anggota}}</a></td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -107,16 +108,40 @@
                 <span class="text">Tambah Logistik</span>
             </a>
             @endif
+            @if(Auth::user()->is_admin)
+            @if (isset($pesan_logistik))
+            <div class="alert alert-danger">
+                {!! $pesan_logistik !!}
+            </div>
+            @endif
+            @else
             <div class="alert alert-warning alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <strong> Barang yang wajib dibawa</strong>
-                <ul>
-                    <li>Sleeping Bag</li>
-                    <li>Tenda</li>
-                    <li>Jas hujan</li>
-                    <li>Obat Pribadi</li>
-                </ul>
+                <div class="row">
+                    <div class="col">
+                        Kelompok :
+                        <ul> 
+                            @foreach($master_logistik as $logistik)
+                            @if($logistik->master_logistik_wajib && $logistik->master_logistik_jenis == 'Kelompok')
+                            <li>{{ $logistik->master_logistik_nama}}</li>
+                            @endif
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div class="col">
+                        Individu :
+                        <ul> 
+                            @foreach($master_logistik as $logistik)
+                            @if($logistik->master_logistik_wajib && $logistik->master_logistik_jenis == 'Individu')
+                            <li>{{ $logistik->master_logistik_nama}}</li>
+                            @endif
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
             </div>
+            @endif
 
 
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -136,7 +161,7 @@
                     @foreach($logistiks as $logistik)
                     <tr>
                         <td>{{ $loop->iteration}}</td>
-                        <td>{{ $logistik->nama_barang}}</td>
+                        <td>{{ $logistik->master_logistik_nama}}</td>
                         <td>{{ $logistik->jumlah_barang}}</td>
                         @if(!auth()->user()->is_admin && $pendakian->user_id == auth()->user()->id)
                         <td><button type="button" class="btn btn-warning edit-btn" data-toggle="modal" data-target="#edit-modal" data-route="{{ route('logistik.update',$logistik->id)}}" data-nama="{{ $logistik->nama_barang}}" data-jumlah="{{ $logistik->jumlah_barang}}">Edit</button></td>
@@ -167,7 +192,12 @@
                     <input type="hidden" name="pendakian_id" value="{{ $pendakian->pendakian_id}}">
                     <div class="form-group">
                         <label for="inputNama">Nama Barang</label>
-                        <input type="text" class="form-control" id="inputNama" placeholder="" name="nama_barang" value="{{ old('nama_barang')}}">
+                        <select class="form-control" id="input_nama_barang" name="nama_barang" required>
+                            <option value="">-- Pilih Barang --</option>
+                            @foreach($master_logistik as $logistik)
+                            <option value="{{ $logistik->master_logistik_id}}">{{ $logistik->master_logistik_nama}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="inputJumlah">Jumlah</label>
@@ -200,7 +230,13 @@
                     @method('PUT')
                     <div class="form-group">
                         <label for="inputNama">Nama Barang</label>
-                        <input type="text" class="form-control" id="inputNama" placeholder="" name="nama_barang" value="{{ old('nama_barang')}}">
+
+                        <select class="form-control" id="input_nama_barang" name="nama_barang" required>
+                            <option value="">-- Pilih Barang --</option>
+                            @foreach($master_logistik as $logistik)
+                            <option value="{{ $logistik->master_logistik_id}}">{{ $logistik->master_logistik_nama}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="inputJumlah">Jumlah</label>
