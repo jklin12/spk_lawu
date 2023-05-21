@@ -121,6 +121,7 @@
                             <input type="hidden" name="data_pendakian[ketua_jenis_kelamin]" id="confrom_ketua_jenis_kelamin">
                             <input type="hidden" name="data_pendakian[ketua_tempat_lahir]" id="confrom_ketua_tempat_lahir">
                             <input type="hidden" name="data_pendakian[ketua_tgl_lahir]" id="confrom_ketua_tgl_lahir">
+                            <input type="hidden" name="data_pendakian[ketua_telepon]" id="confrom_ketua_telepon">
                             <input type="hidden" name="data_pendakian[tanggal_berangkat]" id="confrom_tanggal_berangkat">
                             <input type="hidden" name="data_pendakian[tanggal_pulang]" id="confrom_tanggal_pulang">
                             <input type="hidden" name="data_pendakian[jumlah_anggota]" id="confrom_jumlah_anggota">
@@ -222,6 +223,7 @@
         $('#confrom_ketua_nama').val(ketua_nama);
         $('#confrom_ketua_jenis_kelamin').val(ketua_jenis_kelamin);
         $('#confrom_ketua_tempat_lahir').val(ketua_tempat_lahir);
+        $('#confrom_ketua_telepon').val(ketua_telepon);
         $('#confrom_ketua_tgl_lahir').val(ketua_tgl_lahir);
         $('#confrom_tanggal_berangkat').val(tgl_berangkat);
         $('#confrom_tanggal_pulang').val(tgl_pulang);
