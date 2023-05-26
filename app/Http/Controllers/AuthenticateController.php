@@ -11,7 +11,7 @@ class AuthenticateController extends Controller
     public function doRegister(Request $request)
     {
         $this->validate($request, [
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'password' => 'required',
             'name' => 'required',
             'phone' => 'required',

@@ -72,7 +72,7 @@ class PendakianController extends Controller
             'tanggal_lahir_anggota.*' => 'required|date',
             'telepon_anggota.*' => 'required|string',
         ]);*/
-
+		
         $cekJadwal = Pendakian::where('tanggal_berangkat', $request->tanggal_berangkat)
             ->leftJoin('anggotas', 'pendakians.pendakian_id', '=', 'anggotas.pendakian_id')->count();
         //dd($cekJadwal);
@@ -103,19 +103,7 @@ class PendakianController extends Controller
 
         //dd($postPendakian, $postAnggota);
 
-        foreach ($request->data_anggota as $key => $value) {
-            $postVal[$key]['pendakian_id'] = $request->pendakian_id;
-            $postVal[$key]['nama_anggota'] = $value;
-            $postVal[$key]['alamat_anggota'] = $request->alamat_anggota[$key];
-            $postVal[$key]['jenis_kelamin_anggota'] = $request->jenis_kelamin_anggota[$key];
-            $postVal[$key]['tempat_lahir_anggota'] = $request->tempat_lahir_anggota[$key];
-            $postVal[$key]['tanggal_lahir_anggota'] = $request->tanggal_lahir_anggota[$key];
-            $postVal[$key]['telepon_anggota'] = $request->telepon_anggota[$key];
-
-            //dd($postVal);
-
-        }
-
+       
 
         return redirect()->route('pendakian.index')->withSuccess('Tambah Pendakian Berhasil');
     }
@@ -200,8 +188,10 @@ class PendakianController extends Controller
     public function ticket($id)
     {
         $pendakian = Pendakian::find($id);
-        $anggotas = Anggota::where('pendakian_id', $id)->get();
-        return view('pages.pendakian.ticket', compact('pendakian', 'anggotas'));
+        $anggotas = Anggota::where('pendakian_id', $pendakian->pendakian_id)
+        	->leftJoin('indonesia_cities', 'anggotas.tempat_lahir_anggota', '=', 'indonesia_cities.id')->get();
+	    return view('pages.pendakian.ticket', compact('pendakian', 'anggotas'));
+  
     }
 
     private function waFormat($phoneNumber)
