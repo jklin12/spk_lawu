@@ -25,7 +25,7 @@
                 <div class="col">
                     <p>Ketua Kelompok : {{ $pendakian->ketua_nama}}</p>
                     <p>Ketua Jenis Kelamin : {{ $pendakian->ketua_jenis_kelamin}}</p>
-                    <p>Ketua Telepon : <a href="https://wa.me/ {{ $pendakian->ketua_telepon}}" target="_blank"> {{ $pendakian->ketua_telepon}}</a></p>
+                    <p>Ketua Telepon : <a href="https://wa.me/{{ $pendakian->ketua_telepon}}" target="_blank"> {{ $pendakian->ketua_telepon}}</a></p>
                     <p>Ketua Tempat Tanggal Lahir : {{ $kota->name.', '.$pendakian->ketua_tgl_lahir}}</p>
                     <p>Tanggal Berangkat : {{ $pendakian->tanggal_berangkat}}</p>
                     <p>Tanggal Pulang : {{ $pendakian->tanggal_pulang}}</p>

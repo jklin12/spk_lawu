@@ -25,6 +25,7 @@
                         <th>Tanggal Berangkat</th>
                         <th>Tanggal Pulang</th>
                         <th>Jumlah Anggota</th>
+				<th>Time Pendaftaran</th>
                         <th>Status</th>
                         <th></th>
                     </tr>
@@ -36,6 +37,7 @@
                     <td>{{$pendakian->tanggal_berangkat}}</td>
                     <td>{{$pendakian->tanggal_pulang}}</td>
                     <td>{{$pendakian->jumlah_anggota}}</td>
+			  <td>{{$pendakian->created_at}}</td>
                     @php
                     $badgeColor = '';
                     if($pendakian->status == 'pengajuan'){

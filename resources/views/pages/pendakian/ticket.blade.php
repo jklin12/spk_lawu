@@ -131,8 +131,8 @@
                             <td></td>
                             <td></td>
                             <td style="text-align: right;">
-                                Nomor Pendakian #: {{ $pendakian->pendakian_id }}<br />
-                                Nama Kelompok : {{ $pendakian->nama_kelompok }}<br />
+                                Nomor Pendakian : {{ $pendakian->pendakian_id }}<br />
+                                Ketua Kelompok : {{ $pendakian->ketua_nama }}<br />
                                 Tanggal Berangkat : {{ $pendakian->tanggal_berangkat }}<br />
                                 Tanggal Pulang: {{ $pendakian->tanggal_pulang }}
                             </td>
@@ -160,7 +160,7 @@
                 <td>{{ $anggota->nama_anggota}}</td>
                 <td>{{ $anggota->alamat_anggota}}</td>
                 <td>{{ $anggota->jenis_kelamin_anggota}}</td>
-                <td>{{ $anggota->tempat_lahir_anggota.', '.$anggota->tanggal_lahir_anggota}}</td>
+                <td>{{ $anggota->name.', '.$anggota->tanggal_lahir_anggota}}</td>
                 <td>{{ $anggota->telepon_anggota}}</td>
             </tr>
             @endforeach
