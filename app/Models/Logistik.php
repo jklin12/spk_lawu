@@ -13,5 +13,6 @@ class Logistik extends Model
         'pendakian_id',
         'nama_barang',
         'jumlah_barang', 
+        'foto_barang', 
     ];
 }

@@ -150,6 +150,7 @@
                         <th>No</th>
                         <th>Nama Barang</th>
                         <th>Jumlah</th>
+                        <th>Foto</th>
                         @if(!auth()->user()->is_admin && $pendakian->user_id == auth()->user()->id)
                         <th colspan="2">Action</th>
                         @endif
@@ -163,6 +164,7 @@
                         <td>{{ $loop->iteration}}</td>
                         <td>{{ $logistik->master_logistik_nama}}</td>
                         <td>{{ $logistik->jumlah_barang}}</td>
+                        <td><img src="{{ '/logistik/'.$logistik->foto_barang}}" alt="" srcset="" width="200"></td>
                         @if(!auth()->user()->is_admin && $pendakian->user_id == auth()->user()->id)
                         <td><button type="button" class="btn btn-warning edit-btn" data-toggle="modal" data-target="#edit-modal" data-route="{{ route('logistik.update',$logistik->id)}}" data-nama="{{ $logistik->nama_barang}}" data-jumlah="{{ $logistik->jumlah_barang}}">Edit</button></td>
                         <td><button type="button" class="btn btn-danger delete-btn" data-toggle="modal" data-target="#delete-modal" data-route="{{ route('logistik.destroy',$logistik->id) }}" data-nama="{{ $logistik->nama_barang}}">Hapus</button></td>
@@ -203,6 +205,10 @@
                         <label for="inputJumlah">Jumlah</label>
                         <input type="text" class="form-control" id="inputJumlah" placeholder="" name="jumlah_barang" value="{{ old('jumlah_barang')}}">
                     </div>
+                    <div class="form-group">
+                        <label for="inputJumlah">Foto</label>
+                        <input type="foto" class="form-control" id="inputfoto" placeholder="" name="file" value="{{ old('file')}}">
+                    </div>
 
                 </form>
             </div>
@@ -241,6 +247,10 @@
                     <div class="form-group">
                         <label for="inputJumlah">Jumlah</label>
                         <input type="text" class="form-control" id="inputJumlah" placeholder="" name="jumlah_barang" value="{{ old('jumlah_barang')}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputJumlah">Foto</label>
+                        <input type="foto" class="form-control" id="inputfoto" placeholder="" name="file" value="{{ old('file')}}">
                     </div>
 
                 </form>
