@@ -16,6 +16,16 @@
     </div>
     @endif
 
+     @if (count($errors) > 0)
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
 
     <div class="card shadow mb-4">
 
@@ -44,7 +54,7 @@
                     @endphp
                     <p>Status : <span class="badge badge-{{$badgeColor}}">{{ $pendakian->status}}</span></p>
                     <!-- Circle Buttons (Default) -->
-                    @if(auth()->user()->is_admin && $pendakian->status != 'diterima')
+                    @if(auth()->user()->is_admin && $pendakian->status != 'diterima' && !isset($pesan_logistik))
                     <a href="javascript:;" class="btn btn-primary btn-icon-split mb-2" data-toggle="modal" data-target="#acc-modal">
                         <span class="icon text-white-50">
                             <i class="fas fa-check"></i>
@@ -55,7 +65,7 @@
                 </div>
                 <div class="col">
                     @if($pendakian->status == 'diterima')
-                    {!! QrCode::size(300)->generate(route('pendakian.ticket',$pendakian->pendakian_id)) !!}
+                    {!! QrCode::size(300)->generate('http://192.168.43.66/spk_lawu/public/pendakian/ticket/'.$pendakian->pendakian_id) !!}
                     @endif
                 </div>
             </div>
@@ -108,40 +118,12 @@
                 <span class="text">Tambah Logistik</span>
             </a>
             @endif
-            @if(Auth::user()->is_admin)
             @if (isset($pesan_logistik))
             <div class="alert alert-danger">
                 {!! $pesan_logistik !!}
             </div>
             @endif
-            @else
-            <div class="alert alert-warning alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong> Barang yang wajib dibawa</strong>
-                <div class="row">
-                    <div class="col">
-                        Kelompok :
-                        <ul> 
-                            @foreach($master_logistik as $logistik)
-                            @if($logistik->master_logistik_wajib && $logistik->master_logistik_jenis == 'Kelompok')
-                            <li>{{ $logistik->master_logistik_nama}}</li>
-                            @endif
-                            @endforeach
-                        </ul>
-                    </div>
-                    <div class="col">
-                        Individu :
-                        <ul> 
-                            @foreach($master_logistik as $logistik)
-                            @if($logistik->master_logistik_wajib && $logistik->master_logistik_jenis == 'Individu')
-                            <li>{{ $logistik->master_logistik_nama}}</li>
-                            @endif
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            @endif
+             
 
 
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -164,7 +146,7 @@
                         <td>{{ $loop->iteration}}</td>
                         <td>{{ $logistik->master_logistik_nama}}</td>
                         <td>{{ $logistik->jumlah_barang}}</td>
-                        <td><img src="{{ '/logistik/'.$logistik->foto_barang}}" alt="" srcset="" width="200"></td>
+                        <td><img src="{{ '/spk_lawu/public/logistik_file/'.$logistik->foto_barang}}" alt="" srcset="" width="200"></td>
                         @if(!auth()->user()->is_admin && $pendakian->user_id == auth()->user()->id)
                         <td><button type="button" class="btn btn-warning edit-btn" data-toggle="modal" data-target="#edit-modal" data-route="{{ route('logistik.update',$logistik->id)}}" data-nama="{{ $logistik->nama_barang}}" data-jumlah="{{ $logistik->jumlah_barang}}">Edit</button></td>
                         <td><button type="button" class="btn btn-danger delete-btn" data-toggle="modal" data-target="#delete-modal" data-route="{{ route('logistik.destroy',$logistik->id) }}" data-nama="{{ $logistik->nama_barang}}">Hapus</button></td>
@@ -189,7 +171,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('logistik.store')}}" method="POST" id="add-form">
+                <form action="{{ route('logistik.store')}}" method="POST" id="add-form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="pendakian_id" value="{{ $pendakian->pendakian_id}}">
                     <div class="form-group">
@@ -207,7 +189,7 @@
                     </div>
                     <div class="form-group">
                         <label for="inputJumlah">Foto</label>
-                        <input type="foto" class="form-control" id="inputfoto" placeholder="" name="file" value="{{ old('file')}}">
+                        <input type="file" class="form-control" id="inputfoto" placeholder="" name="file" value="{{ old('file')}}">
                     </div>
 
                 </form>
@@ -231,7 +213,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="" method="POST" id="edit-form">
+                <form action="" method="POST" id="edit-form" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="form-group">
@@ -250,7 +232,7 @@
                     </div>
                     <div class="form-group">
                         <label for="inputJumlah">Foto</label>
-                        <input type="foto" class="form-control" id="inputfoto" placeholder="" name="file" value="{{ old('file')}}">
+                        <input type="file" class="form-control" id="inputfoto" placeholder="" name="file" value="{{ old('file')}}">
                     </div>
 
                 </form>
@@ -270,11 +252,11 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">Acc Pendaftaran</h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
+                    <span aria-hidden="true"></span>
                 </button>
             </div>
             <div class="modal-body">Apakah anda yakin menerima pendaftaran <strong id="delete-name"></strong>?</div>
-            <form action="{{ route('pendakian.update',$pendakian->pendakian_id)}}" method="POST" id="acc-form">
+            <form action="{{ route('pendakian.update',$pendakian->pendakian_id)}}" method="POST" id="acc-form" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="status" value="diterima">
@@ -333,7 +315,7 @@
         $('.edit-btn').click(function() {
             $('#delete-name').html($(this).data('nama'))
             $('#edit-form').attr('action', $(this).data('route'))
-            $('#edit-form #inputNama').val($(this).data('nama'))
+            $('#edit-form #input_nama_barang').val($(this).data('nama')).change()
             $('#edit-form #inputJumlah').val($(this).data('jumlah'))
         })
     })

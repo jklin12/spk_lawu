@@ -51,7 +51,9 @@
                     }
                     @endphp
                     <td><span class="badge badge-{{$badgeColor}}">{{ $pendakian->status}}</span></td>
-                    <td><a href="{{ route('pendakian.show',$pendakian->pendakian_id) }}" class="btn btn-primary">Detail</button></a>
+                    <td><a href="{{ route('pendakian.show',$pendakian->pendakian_id) }}" class="btn btn-primary @php if($key > 0 && $pendakians[$key - 1]->status == 'pengajuan'){
+                        echo 'disabled';
+                    } @endphp" >Detail</a></td>
                 </tr>
                 @endforeach
 

@@ -20,9 +20,9 @@ class PendakianController extends Controller
     {
 
         if (auth()->user()->is_admin) {
-            $pendakians = Pendakian::get();
+            $pendakians = Pendakian::orderBy('created_at')->get();
         } else {
-            $pendakians = Pendakian::where('user_id', Auth::user()->id)->get();
+            $pendakians = Pendakian::where('user_id', Auth::user()->id)->orderBy('created_at')->get();
         }
 
 
@@ -128,11 +128,11 @@ class PendakianController extends Controller
         $load['kota'] = $kota;
         $load['master_logistik'] = MasterLogistik::get();
 
-        if (Auth::user()->is_admin) {
+        //if (Auth::user()->is_admin) {
             $listWajib = MasterLogistik::where('master_logistik_wajib', 1)
                 ->leftJoin('logistiks', 'master_logistiks.master_logistik_id', '=', 'logistiks.nama_barang')
                 ->get();
-            $pesanLogistik = "<p>Data logistik calon pendaki belum lengkap :</p><ul>";
+            $pesanLogistik = "";
             foreach ($listWajib as $key => $value) {
                 if (!$value->id) {
                     $pesanLogistik .= '<li>' . $value->master_logistik_nama . ' Belum ada </li>';
@@ -140,10 +140,14 @@ class PendakianController extends Controller
                     $pesanLogistik .= '<li> Jumlah ' . $value->master_logistik_nama . ' masih kurang ' . ($pendakian->jumlah_anggot - $value->jumlah_barang) . '</li>';
                 }
             }
-            $pesanLogistik .= "</ul>";
             //echo ($pesanLogistik);die;
-            $load['pesan_logistik'] = $pesanLogistik;
-        }
+            if ($pesanLogistik) {
+                $pesanLogistik = "<p>Data logistik calon pendaki belum lengkap :</p><ul>".$pesanLogistik."</ul>";
+                $load['pesan_logistik'] = $pesanLogistik;
+            } 
+            
+            
+        //}
 
         //dd($laod);
         return view('pages.pendakian.show', $load);

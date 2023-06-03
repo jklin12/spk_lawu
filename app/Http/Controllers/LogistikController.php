@@ -35,23 +35,26 @@ class LogistikController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->validate($request, [
             'pendakian_id' => 'required|string',
             'nama_barang' => 'required|string',
             'jumlah_barang' => 'required|string',
             'file' => 'required|file',
         ]);
+	   
 
         $filename = '';
         if ($request->hasfile('file')) {
             $filename = round(microtime(true) * 1000) . '-' . str_replace(' ', '-', $request->file('file')->getClientOriginalName());
-            $request->file('file')->move(public_path('logistik'), $filename);
+            $request->file('file')->move(public_path('logistik_file'), $filename);
         }
         $postVal['pendakian_id'] = $request->pendakian_id;
         $postVal['nama_barang'] = $request->nama_barang;
         $postVal['jumlah_barang'] = $request->jumlah_barang;
         $postVal['foto_barang'] = $filename;
 
+        //dd($postVal);
         Logistik::create($postVal);
 
         return redirect()->route('pendakian.show', $request->pendakian_id)->withSuccess('Tambah Logistik Berhasil');;
@@ -91,14 +94,15 @@ class LogistikController extends Controller
 
             'nama_barang' => 'required|string',
             'jumlah_barang' => 'required|string',
-            'file' => 'required|file',
+            //'file' => 'required|file',
         ]);
+
 
 
         $filename = '';
         if ($request->hasfile('file')) {
             $filename = round(microtime(true) * 1000) . '-' . str_replace(' ', '-', $request->file('file')->getClientOriginalName());
-            $request->file('file')->move(public_path('logistik'), $filename);
+            $request->file('file')->move(public_path('logistik_file'), $filename);
             $postVal['foto_barang'] = $filename;
         }
 

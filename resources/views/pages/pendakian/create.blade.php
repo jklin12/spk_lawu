@@ -128,22 +128,22 @@
 
                             <div id="anggota-1">
                                 <div class="form-group">
-                                    <label for="inputNim">Nama Anggota </label>
+                                    <label for="inputNim">Nama Anggota 1</label>
                                     <input type="text" class="form-control" id="inputNim" placeholder="" name="data_anggota[nama_anggota][]" value="{{ old('nama_anggota')  }}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputNim">Alamat Anggota </label>
+                                    <label for="inputNim">Alamat Anggota 1</label>
                                     <input type="text" class="form-control" id="inputNim" placeholder="" name="data_anggota[alamat_anggota][]" value="{{ old('alamat_anggota')  }}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputNim">Jenis Kelamin Anggota </label>
+                                    <label for="inputNim">Jenis Kelamin Anggota 1</label>
                                     <select class="form-control" id="exampleFormControlSelect1" name="data_anggota[jenis_kelamin_anggota][]" required>
                                         <option value="Laki-laki">Laki-laki</option>
                                         <option value="Perempuan">Perempuan</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputNim">Tempat Lahir Anggota </label>
+                                    <label for="inputNim">Tempat Lahir Anggota 1</label>
 
                                     <div class="form-group" required>
                                         <select class="form-control select2" id="tempat_lahir_anggota" name="data_anggota[tempat_lahir_anggota][]" style="width: 100%;">
@@ -156,7 +156,7 @@
                                 </div>
                                 <div class="form-group">
 
-                                    <label for="inputNim">Tanggal Lahir Anggota </label>
+                                    <label for="inputNim">Tanggal Lahir Anggota 1</label>
                                     <div class="datepicker date input-group">
                                         <input type="text" class="form-control" id="inputNim" placeholder="" name="data_anggota[tanggal_lahir_anggota][]" value="{{ old('tanggal_lahir_anggota')  }}" required>
                                         <div class="input-group-append">
@@ -165,7 +165,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputNim">No Telepon Anggota </label>
+                                    <label for="inputNim">No Telepon Anggota 1</label>
                                     <input type="text" class="form-control" id="inputNim" placeholder="" name="data_anggota[telepon_anggota][]" value="{{ old('telepon_anggota')  }}" required>
                                 </div>
                                 <hr>
