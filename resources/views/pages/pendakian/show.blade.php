@@ -65,7 +65,7 @@
                 </div>
                 <div class="col">
                     @if($pendakian->status == 'diterima')
-                    {!! QrCode::size(300)->generate('http://192.168.43.66/spk_lawu/public/pendakian/ticket/'.$pendakian->pendakian_id) !!}
+                    {!! QrCode::size(300)->generate('http://172.168.100.48/spk_lawu/public/pendakian/ticket/'.$pendakian->pendakian_id) !!}
                     @endif
                 </div>
             </div>
